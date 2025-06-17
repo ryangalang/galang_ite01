@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Student extends Model
+{
+    use HasFactory;
+
+    protected $table = "students";
+    protected $fillable = [
+        'fname',
+        'lname',
+        'email',
+        'contact_number',
+        'gender',
+        'birthdate',
+        'complete_address',
+        'bio',
+        
+        
+
+
+
+    ];   
+
+}
