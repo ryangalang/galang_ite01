@@ -41,7 +41,7 @@
                     <form action="{{ route('login') }}" method="post">
                         @csrf
                         <div class="input-group mb-3">
-                            <input type="email" name="email" class="form-control" placeholder="Email" />
+                            <input type="email" name="email" class="form-control  @error('email') is-invalid @enderror" placeholder="Email" />
                             <div class="input-group-text"><span class="bi bi-envelope"></span></div>
                             @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -50,8 +50,13 @@
                                 @enderror
                         </div>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="Password" />
+                            <input type="password" name="password" class="form-control  @error('password') is-invalid @enderror" placeholder="Password" />
                             <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+                            @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                         </div>
                         <!--begin::Row-->
                         <div class="row">
