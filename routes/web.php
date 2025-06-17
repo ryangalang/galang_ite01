@@ -31,3 +31,7 @@ Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('st
 Route::get('/account/{id}', function ($id) {
     return "Hello $id";
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
