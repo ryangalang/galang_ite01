@@ -67,6 +67,15 @@
                                     </span>
                                 @enderror
                         </div>
+                        <div class="input-group mb-3">
+                            <input type="password" name="password_confirmation" class="form-control"  @error('password') is-invalid @enderror placeholder="Password" />
+                            <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+                            @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                        </div>
                         <!--begin::Row-->
                         <div class="row">
                             <div class="col-8">
