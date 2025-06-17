@@ -91,7 +91,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="studentsDropdown" data-bs-toggle="dropdown">Students</a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/students">Student List</a></li>
+                <li><a class="dropdown-item" href="{{ route ('students') }}">Student List</a></li>
                 <li><a class="dropdown-item" href="/students/create">Add New Student</a></li>
               </ul>
             </li>
@@ -99,7 +99,7 @@
           <div class="d-flex align-items-center gap-3">
             <form class="d-flex navbar-search" role="search" action="/search" method="GET">
               <input class="form-control me-2" type="search" name="query" placeholder="Search...">
-              <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i>🌙</button>
+              <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
             </form>
             <button class="theme-toggle-btn" id="themeToggle" title="Toggle Light/Dark">🌙</button>
           </div>
@@ -119,7 +119,7 @@
 
   <!-- Footer -->
   <footer class="text-center">
-    <small>&copy; 2025 ITP17 - All rights reserved.</small>
+    <small>&copy; 2025 ITP17</small>
   </footer>
 
   <!-- Bootstrap JS -->

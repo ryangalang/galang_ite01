@@ -15,7 +15,7 @@ class Student extends Model
         'email',
         'contact_number',
         'gender',
-        'birthdate',
+        'birtdate',
         'complete_address',
         'bio',
         
