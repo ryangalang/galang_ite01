@@ -1,31 +1,28 @@
-<?php
+@extends('layouts.app')
 
-namespace App\Http\Requests;
+@section('content')
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Update User Info</h3>
+                </div>
+                <!-- /.card-header -->
 
-use Illuminate\Foundation\Http\FormRequest;
+                <!-- form start -->
+                <form action="{{ url('client/users/' . $user->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-class UserRequest extends FormRequest
-{
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
+                    @include('client.users.form')
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        $id = $this->input('id');
-        return [
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users,email,' . (($id) ? $id :null) . ',id',
-            'password' => 'required|min:8|confirmed',
-        ];
-    }
-}
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
