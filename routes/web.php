@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -35,3 +37,7 @@ Route::get('/account/{id}', function ($id) {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::prefix('client')->middleware('auth:web')->group(function() {
+    Route::resource('users', UserController::class);
+});
