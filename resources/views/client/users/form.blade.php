@@ -1,7 +1,7 @@
 <div class="card-body">
     <div class="form-group mb-2">
         <label for="name">User Fullname</label>
-        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter fullname" />
+        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter fullname" value="{{ $user->name ?? ''}}"/>
         @error('name')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
@@ -10,7 +10,7 @@
     </div>
     <div class="form-group mb-2">
         <label for="email">Email address</label>
-        <input type="email" name="email"class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter email" />
+        <input type="email" name="email"class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter email" value="{{ $user->email ?? ''}}" />
         @error('email')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
