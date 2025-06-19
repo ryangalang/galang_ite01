@@ -25,16 +25,21 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse
+                @forelse($users as $key => $user)
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ $key+1 }}</td>
+                    <td>{{ $user->created_at }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>
+                        <a href="" class="btn btn-success btn-sm">Edit</a>
+                        <a href="" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
                 </tr> 
                 @empty
-
+                <tr>
+                    <td class="text-center" colspan=""> No data available</td>
+                </tr>
                 @endforelse
                 
             </tbody>
