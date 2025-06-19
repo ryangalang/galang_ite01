@@ -25,14 +25,18 @@
                 </tr>
             </thead>
             <tbody>
-                
-               <tr>
+                @forelse
+                <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr> 
+                @empty
+
+                @endforelse
+                
             </tbody>
         </table>
     </div>
