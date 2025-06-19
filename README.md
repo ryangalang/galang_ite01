@@ -12,30 +12,41 @@
 <form action="{{ url('client/users') }}" method="POST">
     @csrf
     <div class="card-body">
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="name">User Fullname</label>
-            <input type="text" name="name" class="form-control" id="name" placeholder="Enter fullname" />
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter fullname" />
+            @error('name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="email">Email address</label>
-            <input type="email" name="email"class="form-control" id="email" placeholder="Enter email" />
+            <input type="email" name="email"class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter email" />
+            @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="password">Password</label>
-            <input type="password" name="password" class="form-control" id="password" placeholder="Password" />
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Password" />
+            @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
-        <div class="form-group">
+        <div class="form-group mb-2">
             <label for="password_confirmation">Retype Password</label>
             <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Retype Password" />
-        </div>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
         </div>
     </div>
     <!-- /.card-body -->
 
-    <div class="card-footer">
+    <div class="card-footer d-flex justify-content-end">
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </form>
