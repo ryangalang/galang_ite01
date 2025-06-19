@@ -146,16 +146,17 @@
                     </li>
 
                     <!-- Menu Footer -->
-                    <li class="user-footer d-flex justify-content-between px-3 py-2">
+                    <li class="user-footer d-flex px-3 py-2">
                         <a href="#" class="btn btn-default btn-flat">Profile</a>
-                        <a href="{{ route('logout') }}" class="btn btn-default btn-flat" 
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a href="{{ route('logout') }}" class="btn btn-default btn-flat ms-auto" 
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Sign out
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
                     </li>
+
                 </ul>
             </li>
         </ul>
