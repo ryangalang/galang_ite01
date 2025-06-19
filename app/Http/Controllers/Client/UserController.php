@@ -54,7 +54,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data['user'] = User::find($id);
+        return view('client.users.edit', $data);
     }
 
     /**
