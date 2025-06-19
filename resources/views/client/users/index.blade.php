@@ -48,9 +48,14 @@
     </div>
     <!-- /.card-body -->
 </div>
-
-
-    
             </div>
 </div>
 @endsection
+
+@push('script')
+<script>
+$(document).ready(function(){
+    alert('hello');
+});
+</script>
+@endpush
