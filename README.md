@@ -1,67 +1,47 @@
-<?php
+@extends('layouts.app')
+@section('content')
+<div class="container">
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+        <div class="card-header">
+    <h3 class="card-title">Add New User</h3>
+</div>
+<!-- /.card-header -->
+<!-- form start -->
+<form action="{{ url('client/users') }}" method="POST">
+    @csrf
+    <div class="card-body">
+        <div class="form-group">
+            <label for="name">User Fullname</label>
+            <input type="text" name="name" class="form-control" id="name" placeholder="Enter fullname" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" name="email"class="form-control" id="email" placeholder="Enter email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" id="password" placeholder="Password" />
+        </div>
+        <div class="form-group">
+            <label for="password_confirmation">Retype Password</label>
+            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Retype Password" />
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+    </div>
+    <!-- /.card-body -->
 
-namespace App\Http\Controllers\Client;
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+</div>
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-
-class UserController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $data['users'] = User::all();
-        return view('client.users.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('client.users.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-}
+    </div>
+</div>
+</div>
+@endsection
