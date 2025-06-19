@@ -1,53 +1,33 @@
-@extends('layouts.app')
-@section('content')
-<div class="container">
-    <div class="row"
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-        <h3 class="card-title">Manage User</h3>
-
-        <div class="card-tools">
-            <a href="{{ url('client/users/create')}}"class="btn btn-outline-primary btn-sm ">Add New User</a>
-        </div>
+<div class="card-body">
+    <div class="form-group mb-2">
+        <label for="name">User Fullname</label>
+        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter fullname" />
+        @error('name')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
-    <!-- /.card-header -->
-    <div class="card-body p-0">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="width: 10px;">#</th>
-                    <th>Created Date</th>
-                    <th>User Name</th>
-                    <th>EmailADdress</th>
-                    <th style="width: 150px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($users as $key => $user)
-                <tr>
-                    <td>{{ $key+1 }}</td>
-                    <td>{{ $user->created_date }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        <a href="{{ url('client/users', $user->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
-                        <a href="" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr> 
-                @empty
-                <tr>
-                    <td class="text-center" colspan=""> No data available</td>
-                </tr>
-                @endforelse
-                
-            </tbody>
-        </table>
+    <div class="form-group mb-2">
+        <label for="email">Email address</label>
+        <input type="email" name="email"class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter email" />
+        @error('email')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
+    <div class="form-group mb-2">
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Password" />
+        @error('password')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
-    <!-- /.card-body -->
+    <div class="form-group mb-2">
+        <label for="password_confirmation">Retype Password</label>
+        <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Retype Password" />
+    </div>
 </div>
-            </div>
-</div>
-@endsection
