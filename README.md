@@ -1,86 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Requests;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UserController extends Controller
+class UserRequest extends FormRequest
 {
     /**
-     * Display a listing of the resource.
+     * Determine if the user is authorized to make this request.
      */
-    public function index()
+    public function authorize(): bool
     {
-        $data['users'] = User::all();
-        return view('client.users.index', $data);
+        return true;
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function create()
+    public function rules(): array
     {
-        return view('client.users.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(UserRequest $request)
-    {
-        User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => bcrypt($request['password']),
-
-        ]);
-
-        return redirect()->to('client/users')->with('success', 'User created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $data['user'] = User::find($id);
-        return view('client.users.edit', $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UserRequest $request, string $id)
-    {
-        $user = User::find($id);
-        $user->name = $request['name'];
-        $user->email = $request['email'];
-        if(isset($request['password'])) {
-
-        
-            $user->password = bcrypt($request['password']);
-        }
-        $user->save();
-
-        return redirect()->back()->with('success', 'User has been updateed.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $id = $this->input('id');
+        return [
+            'name'     => 'required',
+            'email'    => 'required|email|unique:users,email,' . (($id) ? $id :null) . ',id',
+            'password' => 'required|min:8|confirmed',
+        ];
     }
 }
