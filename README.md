@@ -1,62 +1,61 @@
-@extends('layouts.app', ['page_title' => 'Students List'])
-
+@extends('layouts.app')
 @section('content')
-    <h2 class="students">{{ $user }}</h2>
-    @session('success')
-    <div class="alert alert-success" role="alert">
-        {{ session ('success')}}
+<div class="container">
+    <div class="row"
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+        <h3 class="card-title">Manage User</h3>
+
+        <div class="card-tools">
+            <a href="{{ url('client/users/create')}}"class="btn btn-outline-primary btn-sm ">Add New User</a>
+        </div>
     </div>
-    @endsession
-    @if($isAdmin)
-    <div class="d-flex justify-content-end">
-        <a href="{{ url('students/create') }}" class="btn btn-primary">Create Student</a>
-    </div>
-        <table class="table table-hover table-striped">
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+        <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Student Name</th>
-                    <th>Email</th>
-                    <th>Contact Number</th>
-                    <th>Action</th>
+                    <th style="width: 10px;">#</th>
+                    <th>Created Date</th>
+                    <th>User Name</th>
+                    <th>EmailADdress</th>
+                    <th style="width: 150px;">Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($students as $key => $student)
-                    <tr>
-                        <td>{{ $key + 1 }}</td>
-                        <td>{{ $student->fname . ' ' . $student->lname }}</td>
-                        <td>{{ $student->email }}</td>
-                        <td>{{ $student->contact_number }}</td>
-                        <td>
-                            <a href="{{ url('students', $student->id)}}/edit" class="btn btn-success btn-sm">Edit</a>
-                            <form action="{{ route('students.delete', $student->id) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger btn-sm" onClick="return confirm('Are you sure you want to delete this students?')">Delete</a>
-                            </form>
-
-                        </td>
-                    </tr>
-                @endforeach
+                @forelse($users as $key => $user)
+                <tr>
+                    <td>{{ $key+1 }}</td>
+                    <td>{{ $user->created_date }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>
+                        <a href="{{ url('client/users', $user->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
+                        <a href="javascript:;" onclick="removeUser({{ $user->id }})" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr> 
+                @empty
+                <tr>
+                    <td class="text-center" colspan=""> No data available</td>
+                </tr>
+                @endforelse
+                
             </tbody>
         </table>
-
-        {!! $students->links() !!}
-    @else
-        <h1>Admin is False</h1>
-    @endif    
+    </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+            </div>
+</div>
 @endsection
 
-@section('css')
-    <style>
-        .students {
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-    </style>
-@endsection
-
-@push('scripts')
+@push('script')
+<script>
+$(document).ready(function(){
+    alert('hello');
+});
+</script>
 @endpush
