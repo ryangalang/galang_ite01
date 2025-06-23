@@ -1,86 +1,62 @@
-<?php
+@extends('layouts.app', ['page_title' => 'Students List'])
 
-namespace App\Http\Controllers\Client;
+@section('content')
+    <h2 class="students">{{ $user }}</h2>
+    @session('success')
+    <div class="alert alert-success" role="alert">
+        {{ session ('success')}}
+    </div>
+    @endsession
+    @if($isAdmin)
+    <div class="d-flex justify-content-end">
+        <a href="{{ url('students/create') }}" class="btn btn-primary">Create Student</a>
+    </div>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Contact Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($students as $key => $student)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $student->fname . ' ' . $student->lname }}</td>
+                        <td>{{ $student->email }}</td>
+                        <td>{{ $student->contact_number }}</td>
+                        <td>
+                            <a href="{{ url('students', $student->id)}}/edit" class="btn btn-success btn-sm">Edit</a>
+                            <form action="{{ route('students.delete', $student->id) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onClick="return confirm('Are you sure you want to delete this students?')">Delete</a>
+                            </form>
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-class UserController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $data['users'] = User::all();
-        return view('client.users.index', $data);
-    }
+        {!! $students->links() !!}
+    @else
+        <h1>Admin is False</h1>
+    @endif    
+@endsection
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('client.users.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(UserRequest $request)
-    {
-        User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => bcrypt($request['password']),
-
-        ]);
-
-        return redirect()->to('client/users')->with('success', 'User created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $data['user'] = User::find($id);
-        return view('client.users.edit', $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UserRequest $request, string $id)
-    {
-        $user = User::find($id);
-        $user->name = $request['name'];
-        $user->email = $request['email'];
-        if(isset($request['password']) && $request['password'] !== null) {
-
-        
-            $user->password = bcrypt($request['password']);
+@section('css')
+    <style>
+        .students {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        $user->save();
+    </style>
+@endsection
 
-        return redirect()->back()->with('success', 'User has been updateed.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-}
+@push('scripts')
+@endpush
