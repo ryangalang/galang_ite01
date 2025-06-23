@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class StudentController extends Controller
 {
@@ -19,11 +20,11 @@ class StudentController extends Controller
         $data['students'] = Student::orderBy('created_at', 'desc')->paginate(15);
         $data['isAdmin'] = true;
         $data['user'] = "Ryan Galang";
-        return view ('students', $data);
+        return view ('client.students.index', $data);
     }
     public function create()
     {
-        return view('students.create');
+        return view('client.students.create');
     }
 
     public function store(Request $request)
@@ -47,13 +48,13 @@ class StudentController extends Controller
             'contact_number' => $request->input('contact_number'),
         ]);
 
-        return redirect()->to('students')->with('success', 'Student has been added successfully.');   
+        return redirect()->to('client/students')->with('success', 'Student has been added successfully.');   
     }
     public function edit($id)
     {
         $data['student'] = Student::find($id);
 
-        return view('students.edit', $data);
+        return view('client.students.edit', $data);
     }
     public function update(Request $request, $id)
     {

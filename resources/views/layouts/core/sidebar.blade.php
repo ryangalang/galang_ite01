@@ -34,27 +34,21 @@
                             <a href="#" class="nav-link">
                                 <i class="nav-icon bi bi-box-seam-fill"></i>
                                 <p>
-                                    Widgets
+                                    Students
                                     <i class="nav-arrow bi bi-chevron-right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./widgets/small-box.html" class="nav-link">
+                                    <a href="{{ url('client/students') }}" class="nav-link">
                                         <i class="nav-icon bi bi-circle"></i>
-                                        <p>Small Box</p>
+                                        <p>Student List</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./widgets/info-box.html" class="nav-link">
+                                    <a href="{{ url('client/students/create') }}" class="nav-link">
                                         <i class="nav-icon bi bi-circle"></i>
-                                        <p>info Box</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="./widgets/cards.html" class="nav-link">
-                                        <i class="nav-icon bi bi-circle"></i>
-                                        <p>Cards</p>
+                                        <p>Add New Students</p>
                                     </a>
                                 </li>
                             </ul>

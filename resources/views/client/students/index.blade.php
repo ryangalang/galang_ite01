@@ -9,7 +9,7 @@
     @endsession
     @if($isAdmin)
     <div class="d-flex justify-content-end">
-        <a href="{{ url('students/create') }}" class="btn btn-primary">Create Student</a>
+        <a href="{{ url('client/students/create') }}" class="btn btn-primary">Create Student</a>
     </div>
         <table class="table table-hover table-striped">
             <thead>
@@ -29,8 +29,8 @@
                         <td>{{ $student->email }}</td>
                         <td>{{ $student->contact_number }}</td>
                         <td>
-                            <a href="{{ url('students', $student->id)}}/edit" class="btn btn-success btn-sm">Edit</a>
-                            <form action="{{ route('students.delete', $student->id) }}" method="post">
+                            <a href="{{ url('client/students', $student->id)}}/edit" class="btn btn-success btn-sm">Edit</a>
+                            <form action="{{ route('students.destroy', $student->id) }}" method="post">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-danger btn-sm" onClick="return confirm('Are you sure you want to delete this students?')">Delete</a>
