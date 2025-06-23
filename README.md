@@ -1,4 +1,4 @@
-@extends('layouts.app', ['page_title' => 'Edit Student'])
+@extends('layouts.app', ['page_title' => 'Students List'])
 
 @section('content')
 <div class="container">
@@ -6,69 +6,71 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h3 class="card-title">Update Student</h3>
+                    <h3 class="card-title">Manage Students</h3>
                     <div class="card-tools ms-auto">
-                        <a href="{{ url('client/users/create') }}" class="btn btn-outline-danger btn-sm">Back</a>
+                        <a href="{{ url('client/users/create') }}" class="btn btn-outline-primary btn-sm">Add New User</a>
                     </div>
                 </div>
                 <!-- /.card-header -->
 
-                <div class="card-body p-3">
+                <div class="card-body p-0">
                     @if(session('success'))
                         <div class="alert alert-success" role="alert">
                             {{ session('success') }}
                         </div>
                     @endif
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Contact Number</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($students as $key => $student)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $student->fname . ' ' . $student->lname }}</td>
+                                    <td>{{ $student->email }}</td>
+                                    <td>{{ $student->contact_number }}</td>
+                                    <td>
+                                        <a href="{{ url('client/students', $student->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
+                                        <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button 
+                                                type="submit" 
+                                                class="btn btn-danger btn-sm" 
+                                                onclick="return confirm('Are you sure you want to delete this student?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form action="{{ route('students.update', $student->id) }}" method="post">
-                                @csrf
-                                @method('PUT')
-
-                                <div class="form-group mb-3">
-                                    <label for="fname">First Name</label>
-                                    <input type="text" name="fname" id="fname" class="form-control" value="{{ $student->fname }}" />
-                                    @error('fname')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="lname">Last Name</label>
-                                    <input type="text" name="lname" id="lname" class="form-control" value="{{ $student->lname }}" />
-                                    @error('lname')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" name="email" id="email" class="form-control" value="{{ $student->email }}" />
-                                    @error('email')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="contact_number">Contact Number</label>
-                                    <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ $student->contact_number }}" />
-                                    @error('contact_number')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <input type="hidden" name="id" value="{{ $student->id }}" />
-
-                                <div class="form-group">
-                                    <button class="btn btn-primary" type="submit">Save Changes</button>
-                                </div>
-                            </form>
-                        </div> <!-- /.col-md-6 -->
-                    </div> <!-- /.row -->
-                </div> <!-- /.card-body -->
-            </div> <!-- /.card -->
-        </div> <!-- /.col-md-12 -->
-    </div> <!-- /.row -->
-</div> <!-- /.container -->
+                    {!! $students->links() !!}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@section('css')
+<style>
+    .students {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+@endsection
+
+@push('scripts')
+@endpush
