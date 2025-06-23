@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h3 class="card-title">Manage User</h3>
+                    <h3 class="card-title">Manage Students</h3>
                     <div class="card-tools ms-auto">
                         <a href="{{ url('client/users/create') }}" class="btn btn-outline-primary btn-sm">Add New User</a>
                     </div>
@@ -19,7 +19,6 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
                     <table class="table table-hover table-striped">
                         <thead>
                             <tr>
