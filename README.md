@@ -66,7 +66,7 @@ class UserController extends Controller
         $user = User::find($id);
         $user->name = $request['name'];
         $user->email = $request['email'];
-        if(isset($request['password'])) {
+        if(isset($request['password']) && $request['password'] !== null) {
 
         
             $user->password = bcrypt($request['password']);
