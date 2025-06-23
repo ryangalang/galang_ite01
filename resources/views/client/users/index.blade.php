@@ -14,6 +14,11 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body p-0">
+        @session('success')
+    <div class="alert alert-success" role="alert">
+        {{ session ('success')}}
+    </div>
+    @endsession
         <table class="table">
             <thead>
                 <tr>
@@ -26,14 +31,16 @@
             </thead>
             <tbody>
                 @forelse($users as $key => $user)
-                <tr>
+                <tr>    
                     <td>{{ $key+1 }}</td>
                     <td>{{ $user->created_date }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
                         <a href="{{ url('client/users', $user->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
-                        <a href="" class="btn btn-danger btn-sm">Delete</a>
+                        @if($user->id !== auth()->id())
+                        <a href="javascript:;" onclick="removeUser({{ $user->id }})" class="btn btn-danger btn-sm">Delete</a>
+                        @endif
                     </td>
                 </tr> 
                 @empty
@@ -52,10 +59,20 @@
 </div>
 @endsection
 
-@push('script')
+@push('scripts')
 <script>
-$(document).ready(function(){
-    alert('hello');
-});
+function removeUser(id) {
+    if(confirm('Are you sure you want to delete this user?')) {
+        $.ajax({
+            type: "DELETE",
+            url: "{{ url('client/users') }}/" + id,
+            dataType: "json",
+            success: function (response) {
+                location.reload();
+
+            }
+        });
+    }
+}
 </script>
 @endpush

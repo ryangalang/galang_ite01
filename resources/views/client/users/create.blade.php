@@ -17,6 +17,7 @@
 
                     <div class="card-footer d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <input type="hidden" name="id"/>
                     </div>
                 </form>
             </div>

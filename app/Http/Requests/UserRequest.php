@@ -25,7 +25,14 @@ class UserRequest extends FormRequest
         return [
             'name'     => 'required',
             'email'    => 'required|email|unique:users,email,' . (($id) ? $id :null) . ',id',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'nullable|required_if:id,null|min:8|confirmed',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'password.required_if' => 'The password field is required.'
         ];
     }
 }

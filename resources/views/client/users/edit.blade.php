@@ -11,6 +11,11 @@
                 <!-- /.card-header -->
 
                 <!-- form start -->
+                @session('success')
+                <div class="alert alert-success" role="alert">
+                    {{ session ('success')}}
+                </div>
+                @endsession
                 <form action="{{ url('client/users/' . $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')

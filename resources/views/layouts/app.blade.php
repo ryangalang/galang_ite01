@@ -5,6 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>AdminLTE v4 | Dashboard</title>
         <!--begin::Primary Meta Tags-->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="title" content="AdminLTE v4 | Dashboard" />
         <meta name="author" content="ColorlibHQ" />
@@ -57,7 +58,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
         <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
         <script src="{{ url('js/adminlte.js"></script>
-  ') }}      <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+        <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
         <script>
             const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
             const Default = {
@@ -79,7 +80,15 @@
             });
         </script>
         <!--end::OverlayScrollbars Configure-->
-        @stack('script')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        @stack('scripts')
+        <script>
+            $.ajaxSetup({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        </script>
     </body>
     <!--end::Body-->
 </html>
