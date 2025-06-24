@@ -1,74 +1,66 @@
-@extends('layouts.app', ['page_title' => 'Edit Student'])
+{{-- resources/views/client/appointments/create.blade.php --}}
+@extends('layouts.app')
 
 @section('content')
 <div class="container">
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h3 class="card-title">Update Student</h3>
-                    <div class="card-tools ms-auto">
-                        <a href="{{ url('client/students') }}" class="btn btn-outline-danger btn-sm">Back</a>
-                    </div>
-                </div>
-                <!-- /.card-header -->
+    <h1>Create Appointment</h1>
 
-                <div class="card-body p-3">
-                    @if(session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Oops! Something went wrong.</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form action="{{ route('students.update', $student->id) }}" method="post">
-                                @csrf
-                                @method('PUT')
+    <form action="{{ route('client.appointments.store') }}" method="POST">
+        @csrf
 
-                                <div class="form-group mb-3">
-                                    <label for="fname">First Name</label>
-                                    <input type="text" name="fname" id="fname" class="form-control" value="{{ $student->fname }}" />
-                                    @error('fname')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
+        <div class="mb-3">
+            <label for="student_id" class="form-label">Student</label>
+            <select name="student_id" id="student_id" class="form-select" required>
+                <option value="" disabled selected>Select a student</option>
+                @foreach ($students as $student)
+                    <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
+                        {{ $student->fname }} {{ $student->lname }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="lname">Last Name</label>
-                                    <input type="text" name="lname" id="lname" class="form-control" value="{{ $student->lname }}" />
-                                    @error('lname')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
+        <div class="mb-3">
+            <label for="title" class="form-label">Appointment Title</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required maxlength="255">
+        </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" name="email" id="email" class="form-control" value="{{ $student->email }}" />
-                                    @error('email')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
+        <div class="mb-3">
+            <label for="appointment_date" class="form-label">Appointment Date</label>
+            <input type="date" name="appointment_date" id="appointment_date" class="form-control" value="{{ old('appointment_date') }}" required>
+        </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="contact_number">Contact Number</label>
-                                    <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ $student->contact_number }}" />
-                                    @error('contact_number')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
+        <div class="mb-3">
+            <label for="appointment_time" class="form-label">Appointment Time</label>
+            <input type="time" name="appointment_time" id="appointment_time" class="form-control" value="{{ old('appointment_time') }}" required>
+        </div>
 
-                                <input type="hidden" name="id" value="{{ $student->id }}" />
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select" required>
+                <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                <option value="Completed" {{ old('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+            </select>
+        </div>
 
-                                <div class="form-group">
-                                    <button class="btn btn-primary" type="submit">Save Changes</button>
-                                </div>
-                            </form>
-                        </div> <!-- /.col-md-6 -->
-                    </div> <!-- /.row -->
-                </div> <!-- /.card-body -->
-            </div> <!-- /.card -->
-        </div> <!-- /.col-md-12 -->
-    </div> <!-- /.row -->
-</div> <!-- /.container -->
+        <div class="mb-3">
+            <label for="remarks" class="form-label">Remarks</label>
+            <textarea name="remarks" id="remarks" class="form-control" rows="3">{{ old('remarks') }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Appointment</button>
+        <a href="{{ route('client.appointments.index') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 @endsection
