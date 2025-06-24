@@ -1,120 +1,95 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <div class="row mt-3 justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Add New Appointment</h3>
-                </div>
+namespace App\Http\Controllers\Client;
 
-                <form action="{{ route('appointments.store') }}" method="POST">
-                    @csrf
+use App\Http\Controllers\Controller;
+use App\Models\Appointment;
+use App\Models\Student;
+use Illuminate\Http\Request;
 
-                    {{-- Student Select --}}
-                    <div class="form-group mb-3">
-                        <label for="student_id">Student</label>
-                        <select name="student_id" id="student_id" class="form-control @error('student_id') is-invalid @enderror" required>
-                            <option value="">-- Select Student --</option>
-                            @foreach ($students as $student)
-                                <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
-                                    {{ $student->fname }} {{ $student->lname }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('student_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+class AppointmentController extends Controller
+{
+    /**
+     * Display a listing of appointments.
+     */
+    public function index()
+    {
+        $appointments = Appointment::with('student')->get();
 
-                    {{-- Title --}}
-                    <div class="form-group mb-3">
-                        <label for="title">Title</label>
-                        <input
-                            type="text"
-                            name="title"
-                            id="title"
-                            class="form-control @error('title') is-invalid @enderror"
-                            value="{{ old('title') }}"
-                            required
-                        >
-                        @error('title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+        return view('client.appointments.index', compact('appointments'));
+    }
 
-                    {{-- Appointment Date --}}
-                    <div class="form-group mb-3">
-                        <label for="appointment_date">Appointment Date</label>
-                        <input
-                            type="date"
-                            name="appointment_date"
-                            id="appointment_date"
-                            class="form-control @error('appointment_date') is-invalid @enderror"
-                            value="{{ old('appointment_date') }}"
-                            required
-                        >
-                        @error('appointment_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+    /**
+     * Show the form for creating a new appointment.
+     */
+    public function create()
+    {
+        $students = Student::all();
 
-                    {{-- Appointment Time --}}
-                    <div class="form-group mb-3">
-                        <label for="appointment_time">Appointment Time</label>
-                        <input
-                            type="time"
-                            name="appointment_time"
-                            id="appointment_time"
-                            class="form-control @error('appointment_time') is-invalid @enderror"
-                            value="{{ old('appointment_time') }}"
-                            required
-                        >
-                        @error('appointment_time')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+        return view('client.appointments.create', compact('students'));
+    }
 
-                    {{-- Status --}}
-                    <div class="form-group mb-3">
-                        <label for="status">Status</label>
-                        <select
-                            name="status"
-                            id="status"
-                            class="form-control @error('status') is-invalid @enderror"
-                            required
-                        >
-                            <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="Completed" {{ old('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
-                        </select>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+    /**
+     * Store a newly created appointment in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'student_id'       => 'required|exists:students,id',
+            'title'            => 'required|string|max:255',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+            'status'           => 'required|in:Pending,Completed',
+            'remarks'          => 'nullable|string',
+        ]);
 
-                    {{-- Remarks --}}
-                    <div class="form-group mb-3">
-                        <label for="remarks">Remarks</label>
-                        <textarea
-                            name="remarks"
-                            id="remarks"
-                            class="form-control @error('remarks') is-invalid @enderror"
-                            rows="3"
-                        >{{ old('remarks') }}</textarea>
-                        @error('remarks')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+        Appointment::create($request->all());
 
-                    {{-- Submit Button --}}
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Save Appointment</button>
-                    </div>
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment created successfully.');
+    }
 
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    /**
+     * Show the form for editing the specified appointment.
+     */
+    public function edit($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $students = Student::all();
+
+        return view('client.appointments.edit', compact('appointment', 'students'));
+    }
+
+    /**
+     * Update the specified appointment in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'student_id'       => 'required|exists:students,id',
+            'title'            => 'required|string|max:255',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+            'status'           => 'required|in:Pending,Completed',
+            'remarks'          => 'nullable|string',
+        ]);
+
+        $appointment = Appointment::findOrFail($id);
+        $appointment->update($request->all());
+
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment updated successfully.');
+    }
+
+    /**
+     * Remove the specified appointment from storage.
+     */
+    public function destroy($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->delete();
+
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment deleted successfully.');
+    }
+}
