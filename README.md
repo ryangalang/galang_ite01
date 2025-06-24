@@ -2,87 +2,119 @@
 
 @section('content')
 <div class="container">
-    <div class="row">
-    <div class="row mt-3">
-        <div class="col-md-12">
+    <div class="row mt-3 justify-content-center">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Manage Appointments</h3>
-
-                    <div class="card-tools">
-                        <a href="{{ url('client/appointments/create') }}" class="btn btn-outline-primary btn-sm">Add New Appointment</a>
-                    </div>
+                    <h3>Add New Appointment</h3>
                 </div>
-                <!-- /.card-header -->
 
-                <div class="card-body p-0">
-                    @if(session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                <form action="{{ route('appointments.store') }}" method="POST">
+                    @csrf
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px;">#</th>
-                                <th>Student</th>
-                                <th>Title</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Status</th>
-                                <th>Remarks</th>
-                                <th style="width: 150px;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($appointments as $key => $appointments)
-                                <tr>    
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $appointments->student->fname ?? '' }} {{ $appointments->student->lname ?? '' }}</td>
-                                    <td>{{ $appointments->title }}</td>
-                                    <td>{{ $appointments->appointment_date }}</td>
-                                    <td>{{ $appointments->appointment_time }}</td>
-                                    <td>{{ $appointments->status }}</td>
-                                    <td>{{ $appointments->remarks }}</td>
-                                    <td>
-                                        <a href="{{ url('client/appointments', $appointments->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
-                                        <a href="javascript:;" onclick="removeAppointment({{ $appointments->id }})" class="btn btn-danger btn-sm">Delete</a>
-                                    </td>
-                                </tr> 
-                            @empty
-                                <tr>
-                                    <td class="text-center" colspan="8">No appointments available</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div> <!-- /.card-body -->
-            </div> <!-- /.card -->
-        </div> <!-- /.col -->
-    </div> <!-- /.row -->
-</div> <!-- /.container -->
+                    {{-- Student Select --}}
+                    <div class="form-group mb-3">
+                        <label for="student_id">Student</label>
+                        <select name="student_id" id="student_id" class="form-control @error('student_id') is-invalid @enderror" required>
+                            <option value="">-- Select Student --</option>
+                            @foreach ($students as $student)
+                                <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
+                                    {{ $student->fname }} {{ $student->lname }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('student_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Title --}}
+                    <div class="form-group mb-3">
+                        <label for="title">Title</label>
+                        <input
+                            type="text"
+                            name="title"
+                            id="title"
+                            class="form-control @error('title') is-invalid @enderror"
+                            value="{{ old('title') }}"
+                            required
+                        >
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Appointment Date --}}
+                    <div class="form-group mb-3">
+                        <label for="appointment_date">Appointment Date</label>
+                        <input
+                            type="date"
+                            name="appointment_date"
+                            id="appointment_date"
+                            class="form-control @error('appointment_date') is-invalid @enderror"
+                            value="{{ old('appointment_date') }}"
+                            required
+                        >
+                        @error('appointment_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Appointment Time --}}
+                    <div class="form-group mb-3">
+                        <label for="appointment_time">Appointment Time</label>
+                        <input
+                            type="time"
+                            name="appointment_time"
+                            id="appointment_time"
+                            class="form-control @error('appointment_time') is-invalid @enderror"
+                            value="{{ old('appointment_time') }}"
+                            required
+                        >
+                        @error('appointment_time')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Status --}}
+                    <div class="form-group mb-3">
+                        <label for="status">Status</label>
+                        <select
+                            name="status"
+                            id="status"
+                            class="form-control @error('status') is-invalid @enderror"
+                            required
+                        >
+                            <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Completed" {{ old('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+                        </select>
+                        @error('status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Remarks --}}
+                    <div class="form-group mb-3">
+                        <label for="remarks">Remarks</label>
+                        <textarea
+                            name="remarks"
+                            id="remarks"
+                            class="form-control @error('remarks') is-invalid @enderror"
+                            rows="3"
+                        >{{ old('remarks') }}</textarea>
+                        @error('remarks')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Submit Button --}}
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Save Appointment</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
-
-@push('scripts')
-<script>
-function removeAppointment(id) {
-    if(confirm('Are you sure you want to delete this appointment?')) {
-        $.ajax({
-            type: "DELETE",
-            url: "{{ url('client/appointments') }}/" + id,
-            dataType: "json",
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                location.reload();
-            },
-            error: function (xhr) {
-                alert('Something went wrong.');
-            }
-        });
-    }
-}
-</script>
-@endpush
