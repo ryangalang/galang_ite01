@@ -61,7 +61,7 @@
         <div class="col-md-8 col-lg-6">
             <div class="card">
                 <div class="card-header text-center">
-                    Add New Appointment
+                    Add Appointment
                 </div>
 
                 <form action="{{ route('appointments.store') }}" method="POST" class="p-4">

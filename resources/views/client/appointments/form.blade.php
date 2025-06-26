@@ -11,7 +11,6 @@
 
                 <form action="{{ route('appointments.store') }}" method="POST">
                     @csrf
-
                     {{-- Student Select --}}
                     <div class="form-group mb-3">
                         <label for="student_id">Student</label>
