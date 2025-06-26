@@ -1,117 +1,60 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Mail;
 
-use App\Http\Controllers\Controller;
-use App\Models\Appointment;
-use App\Models\Student;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendAppointmentEmail;
-use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
 
-class AppointmentController extends Controller
+class SendAppointmentEmail extends Mailable
 {
-    /**
-     * Display a listing of appointments.
-     */
-    public function index()
-    {
-        $appointments = Appointment::with('student')->get();
+    use Queueable, SerializesModels;
 
-        return view('client.appointments.index', compact('appointments'));
+    public $student;
+    public $schedule_date;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct($student, $schedule_date)
+    {
+        $this->student = $student;
+        $this->schedule_date = $schedule_date;
     }
 
     /**
-     * Show the form for creating a new appointment.
+     * Get the message envelope.
      */
-    public function create()
+    public function envelope(): Envelope
     {
-        $students = Student::all();
-
-        return view('client.appointments.create', compact('students'));
+        return new Envelope(
+            subject: 'Appointment Confirmation',
+        );
     }
 
     /**
-     * Store a newly created appointment in storage.
+     * Get the message content definition.
      */
-    public function store(Request $request)
+    public function content(): Content
     {
-        $request->validate([
-            'student_id'       => 'required|exists:students,id',
-            'title'            => 'required|string|max:255',
-            'appointment_date' => 'required|date',
-            'appointment_time' => 'required',
-            'status'           => 'required|in:Pending,Completed',
-            'remarks'          => 'nullable|string',
-        ]);
-
-        $student_id = $request->input('student_id');
-
-        // Create appointment first
-        $appointment = Appointment::create($request->all());
-
-        // Find the student to send email
-        $student = Student::find($student_id);
-
-        // Format the schedule date & time nicely
-        $schedule_date = Carbon::parse($request->input('appointment_date'))->format('d, F, Y') . ' ' .
-                         Carbon::parse($request->input('appointment_time'))->format('h:i A');
-
-        // Send mail only if student and email exists
-        if ($student && $student->email) {
-            Mail::to($student->email)->send(new SendAppointmentEmail($student, $schedule_date));
-        }
-
-        return redirect()->route('appointments.index')
-                         ->with('success', 'Appointment created successfully.');
+        return new Content(
+            view: 'mails.appointment',
+            with: [
+                'student' => $this->student,
+                'schedule_date' => $this->schedule_date,
+            ],
+        );
     }
 
     /**
-     * Show the form for editing the specified appointment.
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function edit($id)
+    public function attachments(): array
     {
-        $appointment = Appointment::findOrFail($id);
-        $students = Student::all();
-
-        return view('client.appointments.edit', compact('appointment', 'students'));
-    }
-
-    /**
-     * Update the specified appointment in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'student_id'       => 'required|exists:students,id',
-            'title'            => 'required|string|max:255',
-            'appointment_date' => 'required|date',
-            'appointment_time' => 'required',
-            'status'           => 'required|in:Pending,Completed',
-            'remarks'          => 'nullable|string',
-        ]);
-
-        $appointment = Appointment::findOrFail($id);
-        $appointment->update($request->all());
-
-        return redirect()->route('appointments.index')
-                         ->with('success', 'Appointment updated successfully.');
-    }
-
-    /**
-     * Remove the specified appointment from storage.
-     */
-    public function destroy($id)
-    {
-        $appointment = Appointment::findOrFail($id);
-        $appointment->delete();
-
-        if (request()->ajax()) {
-            return response()->json(['success' => 'Appointment deleted successfully']);
-        }
-
-        return redirect()->route('appointments.index')
-                         ->with('success', 'Appointment deleted successfully.');
+        return [];
     }
 }
