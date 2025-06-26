@@ -22,12 +22,12 @@
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 10px;">#</th>
-                                <th>Student</th>
-                                <th>Title</th>
-                                <th>Date</th>
+                                <th>Schedule Date</th>
                                 <th>Time</th>
-                                <th>Status</th>
+                                <th>Title</th>
                                 <th>Remarks</th>
+                                <th>Student</th>
+                                <th>Status</th>
                                 <th style="width: 150px;">Action</th>
                             </tr>
                         </thead>
@@ -35,10 +35,11 @@
                             @forelse($appointments as $key => $appointment)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $appointment->student->fname ?? '' }} {{ $appointment->student->lname ?? '' }}</td>
-                                    <td>{{ $appointment->title }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</td>
+                                    <td>{{ $appointment->title }}</td>
+                                    <td>{{ $appointment->remarks }}</td>
+                                    <td>{{ $appointment->student->fname ?? '' }} {{ $appointment->student->lname ?? '' }}</td>
                                     <td>
                                         @if($appointment->status == 'Completed')
                                             <span class="badge bg-success">Completed</span>
@@ -46,7 +47,6 @@
                                             <span class="badge bg-warning text-dark">Pending</span>
                                         @endif
                                     </td>
-                                    <td>{{ $appointment->remarks }}</td>
                                     <td>
                                         <a href="{{ url('client/appointments', $appointment->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
                                         <button type="button" onclick="removeAppointment({{ $appointment->id }})" class="btn btn-danger btn-sm">Delete</button>
@@ -85,10 +85,10 @@ function removeAppointment(id) {
             data: {
                 _token: '{{ csrf_token() }}'
             },
-            success: function (response) {
+            success: function () {
                 location.reload();
             },
-            error: function (xhr) {
+            error: function () {
                 alert('Something went wrong.');
             }
         });
