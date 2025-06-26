@@ -27,7 +27,7 @@
 
                 <li class="nav-item">
                     <a href="{{ url('client/users') }}" class="nav-link">
-                        <i class="nav-icon bi bi-palette"></i>
+                        <i class="nav-icon bi bi-people-fill"></i>
                         <p>Manage Users</p>
                     </a>
                 </li>
@@ -35,7 +35,7 @@
                 <!-- Students Section -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-box-seam-fill"></i>
+                        <i class="nav-icon bi bi-mortarboard-fill"></i>
                         <p>
                             Students
                             <i class="nav-arrow bi bi-chevron-right"></i>
@@ -70,13 +70,13 @@
                         <li class="nav-item">
                             <a href="{{ url('client/appointments') }}" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>Manage Appointment</p>
+                                <p>Appoinment List</p>
                             </a>    
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('client/appointments/create') }}" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>Add New Appointment</p>
+                                <p>Add Appointment</p>
                             </a>    
                         </li>
                     </ul>
