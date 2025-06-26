@@ -89,6 +89,10 @@ class AppointmentController extends Controller
         $appointment = Appointment::findOrFail($id);
         $appointment->delete();
 
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Appointment deleted successfully']);
+        }
+
         return redirect()->route('appointments.index')
                          ->with('success', 'Appointment deleted successfully.');
     }

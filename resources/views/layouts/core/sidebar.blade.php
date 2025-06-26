@@ -60,7 +60,7 @@
                 <!-- Appointment Section -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-calendar-check-fill"></i>
+                        <i class="nav-icon bi bi-calendar-event-fill"></i>
                         <p>
                             Appointments
                             <i class="nav-arrow bi bi-chevron-right"></i>

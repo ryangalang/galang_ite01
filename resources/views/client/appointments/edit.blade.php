@@ -51,7 +51,7 @@
         <div class="col-md-8 col-lg-6">
             <div class="card">
                 <div class="card-header text-end pe-4">
-                    Edit Appointment
+                    Update Appointment
                 </div>
 
                 <form action="{{ route('appointments.update', $appointment->id) }}" method="POST" class="p-4">
