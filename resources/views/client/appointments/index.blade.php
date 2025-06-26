@@ -24,7 +24,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 10px;">#</th>
-                                <th>Schedule</th>
+                                <th>Schedule Date</th>
                                 <th>Title</th>
                                 <th>Remarks</th>
                                 <th>Student</th>
