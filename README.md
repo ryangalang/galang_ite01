@@ -1,98 +1,117 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">Manage Appointments</h3>
-                    <a href="{{ url('client/appointments/create') }}" class="btn btn-outline-primary btn-sm">Add New Appointment</a>
-                </div>
-                <!-- /.card-header -->
+namespace App\Http\Controllers\Client;
 
-                <div class="card-body p-0">
-                    @if(session('success'))
-                        <div class="alert alert-success m-3" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+use App\Http\Controllers\Controller;
+use App\Models\Appointment;
+use App\Models\Student;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendAppointmentEmail;
+use Carbon\Carbon;
 
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width: 10px;">#</th>
-                                <th>Schedule Date</th>
-                                <th>Time</th>
-                                <th>Title</th>
-                                <th>Remarks</th>
-                                <th>Student</th>
-                                <th>Status</th>
-                                <th style="width: 150px;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($appointments as $key => $appointment)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</td>
-                                    <td>{{ $appointment->title }}</td>
-                                    <td>{{ $appointment->remarks }}</td>
-                                    <td>{{ $appointment->student->fname ?? '' }} {{ $appointment->student->lname ?? '' }}</td>
-                                    <td>
-                                        @if($appointment->status == 'Completed')
-                                            <span class="badge bg-success">Completed</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ url('client/appointments', $appointment->id) }}/edit" class="btn btn-success btn-sm">Edit</a>
-                                        <button type="button" onclick="removeAppointment({{ $appointment->id }})" class="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td class="text-center" colspan="8">No appointments available</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div> <!-- /.card-body -->
-            </div> <!-- /.card -->
-        </div> <!-- /.col -->
-    </div> <!-- /.row -->
-</div> <!-- /.container -->
-@endsection
+class AppointmentController extends Controller
+{
+    /**
+     * Display a listing of appointments.
+     */
+    public function index()
+    {
+        $appointments = Appointment::with('student')->get();
 
-@section('footer')
-<footer class="footer mt-auto py-3 border-top bg-light">
-  <div class="container text-center">
-    <small class="text-muted">&copy; {{ date('Y') }} Your Company or Project Name. All rights reserved.</small>
-  </div>
-</footer>
-@endsection
+        return view('client.appointments.index', compact('appointments'));
+    }
 
-@push('scripts')
-<script>
-function removeAppointment(id) {
-    if(confirm('Are you sure you want to delete this appointment?')) {
-        $.ajax({
-            type: "DELETE",
-            url: "{{ url('client/appointments') }}/" + id,
-            dataType: "json",
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function () {
-                location.reload();
-            },
-            error: function () {
-                alert('Something went wrong.');
-            }
-        });
+    /**
+     * Show the form for creating a new appointment.
+     */
+    public function create()
+    {
+        $students = Student::all();
+
+        return view('client.appointments.create', compact('students'));
+    }
+
+    /**
+     * Store a newly created appointment in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'student_id'       => 'required|exists:students,id',
+            'title'            => 'required|string|max:255',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+            'status'           => 'required|in:Pending,Completed',
+            'remarks'          => 'nullable|string',
+        ]);
+
+        $student_id = $request->input('student_id');
+
+        // Create appointment first
+        $appointment = Appointment::create($request->all());
+
+        // Find the student to send email
+        $student = Student::find($student_id);
+
+        // Format the schedule date & time nicely
+        $schedule_date = Carbon::parse($request->input('appointment_date'))->format('d, F, Y') . ' ' .
+                         Carbon::parse($request->input('appointment_time'))->format('h:i A');
+
+        // Send mail only if student and email exists
+        if ($student && $student->email) {
+            Mail::to($student->email)->send(new SendAppointmentEmail($student, $schedule_date));
+        }
+
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment created successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified appointment.
+     */
+    public function edit($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $students = Student::all();
+
+        return view('client.appointments.edit', compact('appointment', 'students'));
+    }
+
+    /**
+     * Update the specified appointment in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'student_id'       => 'required|exists:students,id',
+            'title'            => 'required|string|max:255',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+            'status'           => 'required|in:Pending,Completed',
+            'remarks'          => 'nullable|string',
+        ]);
+
+        $appointment = Appointment::findOrFail($id);
+        $appointment->update($request->all());
+
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment updated successfully.');
+    }
+
+    /**
+     * Remove the specified appointment from storage.
+     */
+    public function destroy($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => 'Appointment deleted successfully']);
+        }
+
+        return redirect()->route('appointments.index')
+                         ->with('success', 'Appointment deleted successfully.');
     }
 }
-</script>
-@endpush
