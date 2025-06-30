@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendAppointmentEmailJob;
 use App\Models\Appointment;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendAppointmentEmail;
 use Carbon\Carbon;
 
 class AppointmentController extends Controller
@@ -49,7 +48,14 @@ class AppointmentController extends Controller
         $student_id = $request->input('student_id');
 
         // Create appointment first
-        $appointment = Appointment::create($request->all());
+        $appointment = Appointment::create($request->only([
+            'student_id',
+            'title',
+            'appointment_date',
+            'appointment_time',
+            'status',
+            'remarks',
+        ]));
 
         // Find the student to send email
         $student = Student::find($student_id);
@@ -60,7 +66,8 @@ class AppointmentController extends Controller
 
         // Send mail only if student and email exists
         if ($student && $student->email) {
-            Mail::to($student->email)->send(new SendAppointmentEmail($student, $schedule_date));
+            // Dispatch job with 5 seconds delay
+            SendAppointmentEmailJob::dispatch($student, $schedule_date)->delay(now()->addSeconds(5));
         }
 
         return redirect()->route('appointments.index')
@@ -93,7 +100,14 @@ class AppointmentController extends Controller
         ]);
 
         $appointment = Appointment::findOrFail($id);
-        $appointment->update($request->all());
+        $appointment->update($request->only([
+            'student_id',
+            'title',
+            'appointment_date',
+            'appointment_time',
+            'status',
+            'remarks',
+        ]));
 
         return redirect()->route('appointments.index')
                          ->with('success', 'Appointment updated successfully.');
