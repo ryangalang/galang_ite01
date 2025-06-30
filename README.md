@@ -1,28 +1,82 @@
-<?php
+@extends('layouts.app')
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\UserController;
-use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\Client\StudentController;
-use Symfony\Component\HttpKernel\Profiler\Profile;
+@section('content')
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Update User Info</h3>
+                </div>
 
-Route::get('/', function () {
-    return view('welcome');
-});
+                <!-- Success Alert -->
+                @if (session('success'))
+                    <div class="alert alert-success m-3" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
+                <!-- Form Start -->
+                <form action="{{ url('client/profile/' . auth()->user()->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-Route::get('/account/{id}', function ($id) {
-    return "Hello $id";
-});
-Auth::routes();
+                    <div class="card-body">
+                        <!-- Full Name -->
+                        <div class="form-group mb-2">
+                            <label for="name">User Fullname</label>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                                   id="name" placeholder="Enter fullname"
+                                   value="{{ $user->name ?? '' }}">
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+                        <!-- Email -->
+                        <div class="form-group mb-2">
+                            <label for="email">Email address</label>
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                   id="email" placeholder="Enter email"
+                                   value="{{ $user->email ?? '' }}">
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
-Route::prefix('client')->middleware('auth:web')->group(function(){
-    Route::resource('users',UserController::class);
-    Route::resource('students',StudentController::class);
-    Route::resource('profile', ProfileController::class);
-});
-Route::prefix('client')->group(function () {
-    Route::resource('appointments', \App\Http\Controllers\Client\AppointmentController::class);
-});
+                        <!-- Password -->
+                        <div class="form-group mb-2">
+                            <label for="password">Password</label>
+                            <input type="password" name="password"
+                                   class="form-control @error('password') is-invalid @enderror"
+                                   id="password" placeholder="Password">
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <!-- Retype Password -->
+                        <div class="form-group mb-2">
+                            <label for="password_confirmation">Retype Password</label>
+                            <input type="password" name="password_confirmation" class="form-control"
+                                   id="password_confirmation" placeholder="Retype Password">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
