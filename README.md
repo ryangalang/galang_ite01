@@ -37,31 +37,21 @@
             <!-- /.login-logo -->
             <div class="card">
                 <div class="card-body login-card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
                     <p class="login-box-msg">Reset Password</p>
-                    <form action="{{ route('password.update') }}" method="post">
+                    <form action="{{ route('password.email') }}" method="post">
                         @csrf
-                        <input type="hidden" name="token" value="{{ $token }}">
                         <div class="input-group mb-3">
-                            <input type="email" name="email" class="form-control  @error('email') is-invalid @enderror" placeholder="Email" value="{{ $email ?? old('email') }}" readonly />
+                            <input type="email" name="email" class="form-control  @error('email') is-invalid @enderror" placeholder="Email" />
                             <div class="input-group-text"><span class="bi bi-envelope"></span></div>
                             @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                        </div>
-                        <div class="input-group mb-3">
-                            <input type="password" name="password" class="form-control"  @error('password') is-invalid @enderror placeholder="Password" />
-                            <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
-                            @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                        </div>
-                        <div class="input-group mb-3">
-                            <input type="password" name="password_confirmation" class="form-control"  @error('password') is-invalid @enderror placeholder="RetypePassword" />
-                            <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
                         </div>
                         
                         <!--begin::Row-->
