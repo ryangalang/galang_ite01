@@ -123,16 +123,16 @@
             <!-- User Menu Dropdown -->
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                    <img src="{{ url('assets/img/user2-160x160.jpg') }}" class="user-image rounded-circle shadow" alt="User Image" />
+                    <img src="{{ auth()->user()->display_photo }}" class="user-image rounded-circle shadow" alt="User Image" />
                     <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                     <!-- User Image -->
                     <li class="user-header text-bg-primary">
-                        <img src="{{ url('assets/img/user2-160x160.jpg') }}" class="rounded-circle shadow" alt="User Image" />
+                        <img src="{{ auth()->user()->display_photo }}" class="rounded-circle shadow" alt="User Image" />
                         <p>
                             {{ auth()->user()->name }} - Web Developer
-                            <small>Member since Nov. 2023</small>
+                            <small>Member since {{ auth()->user()->registered_date}}</small>
                         </p>
                     </li>
 

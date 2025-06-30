@@ -65,11 +65,13 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $request->validate(
+        [
             'name'  => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'required|nullable|min:8|confirmed',
-        ]);
+            'password' => 'nullable|min:8|confirmed',
+        ] 
+    );
 
         $user = Auth::user();
         $user->name = $request->name;
@@ -77,6 +79,17 @@ class ProfileController extends Controller
 
         if ($request->filled('password')) {
             $user->password = bcrypt($request->password);
+        }
+
+        if($request->has('photo') && $request->file('photo')->isValid()) {
+            $photo = $request->file('photo');
+            $originalName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension =$photo->getClientOriginalExtension();
+
+            $photo_name =$originalName . '-' . time() . '-' . $extension;
+            $path =$request->file('photo')->storeAs('photos', $photo_name, 'public');
+            $user->photo = $path;
+
         }
 
         $user->save();

@@ -70,10 +70,10 @@
 
                         <!-- Profile Photo -->
                         <div class="form-group mb-2">
-                            <label for="profile_picture">Profile Photo</label>
-                            <input type="file" name="profile_picture" class="form-control @error('profile_picture') is-invalid @enderror"
-                                   id="profile_picture">
-                            @error('profile_picture')
+                            <label for="photo">Profile Photo</label>
+                            <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror"
+                                   id="photo">
+                            @error('photo')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
