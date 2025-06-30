@@ -1,82 +1,95 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Update User Profile</h3>
-                </div>
+namespace App\Http\Controllers\Client;
 
-                <!-- Success Alert -->
-                @if (session('success'))
-                    <div class="alert alert-success m-3" role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+// use App\Models\Profile; // Uncomment if using a Profile model
+use Illuminate\Support\Facades\Auth;
 
-                <!-- Form Start -->
-                <form action="{{ url('client/profile/' . auth()->user()->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+class ProfileController extends Controller
+{
+    /**
+     * Display the user's profile.
+     */
+    public function index()
+    {
+        $user = Auth::user();
+        return view('client.profile.index', compact('user'));
+    }
 
-                    <div class="card-body">
-                        <!-- Full Name -->
-                        <div class="form-group mb-2">
-                            <label for="name">User Fullname</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                   id="name" placeholder="Enter fullname"
-                                   value="{{ auth()->user()->name }}">
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * Show the form for creating a new profile (optional).
+     */
+    public function create()
+    {
+        return view('client.profile.create');
+    }
 
-                        <!-- Email -->
-                        <div class="form-group mb-2">
-                            <label for="email">Email address</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                   id="email" placeholder="Enter email"
-                                   value="{{ auth()->user()->email }}">
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * Store a newly created profile in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+        ]);
 
-                        <!-- Password -->
-                        <div class="form-group mb-2">
-                            <label for="password">Password</label>
-                            <input type="password" name="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   id="password" placeholder="Password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+        // Profile::create($request->all()); // For profile table
 
-                        <!-- Retype Password -->
-                        <div class="form-group mb-2">
-                            <label for="password_confirmation">Retype Password</label>
-                            <input type="password" name="password_confirmation" class="form-control"
-                                   id="password_confirmation" placeholder="Retype Password">
-                        </div>
-                    </div>
+        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
+    }
 
-                    <!-- Submit Button -->
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
+    /**
+     * Display the specified profile.
+     */
+    public function show($id)
+    {
+        // $profile = Profile::findOrFail($id);
+        return view('client.profile.show'); // , compact('profile')
+    }
 
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    /**
+     * Show the form for editing the profile.
+     */
+    public function edit($id)
+    {
+        $user = Auth::user();
+
+        return view('client.profile.edit', compact('user'));
+    }
+
+    /**
+     * Update the user's profile.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Remove the specified profile from storage.
+     */
+    public function destroy($id)
+    {
+        // Profile::findOrFail($id)->delete();
+        return redirect()->route('profile.index')->with('success', 'Profile deleted successfully.');
+    }
+}
