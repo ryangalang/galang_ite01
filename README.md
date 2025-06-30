@@ -1,94 +1,63 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Update User Profile</h3>
-                </div>
+namespace App\Models;
 
-                <!-- Success Alert -->
-                @if (session('success'))
-                    <div class="alert alert-success m-3" role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-                <!-- Form Start -->
-                <form action="{{ url('client/profile/' . auth()->user()->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+class User extends Authenticatable
+{
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
-                    <div class="card-body">
-                        <!-- Full Name -->
-                        <div class="form-group mb-2">
-                            <label for="name">User Fullname</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                   id="name" placeholder="Enter fullname"
-                                   value="{{ auth()->user()->name }}">
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $guarded = [];
 
-                        <!-- Email -->
-                        <div class="form-group mb-2">
-                            <label for="email">Email address</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                   id="email" placeholder="Enter email"
-                                   value="{{ auth()->user()->email }}">
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    protected $appends = ['created_date', 'display_photo', 'registered_date'];
 
-                        <!-- Password -->
-                        <div class="form-group mb-2">
-                            <label for="password">Password</label>
-                            <input type="password" name="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   id="password" placeholder="Password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
 
-                        <!-- Retype Password -->
-                        <div class="form-group mb-2">
-                            <label for="password_confirmation">Retype Password</label>
-                            <input type="password" name="password_confirmation" class="form-control"
-                                   id="password_confirmation" placeholder="Retype Password">
-                        </div>
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-                        <!-- Profile Photo -->
-                        <div class="form-group mb-2">
-                            <label for="profile_picture">Profile Photo</label>
-                            <input type="file" name="profile_picture" class="form-control @error('profile_picture') is-invalid @enderror"
-                                   id="profile_picture">
-                            @error('profile_picture')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+    public function getCreatedDateAttribute()
+    {
+        return $this->created_at->format('d F, Y');
+    }
+     public function getDisplayPhotoAttribute()
+    {
+        $photo = $this->photo;
+        if($photo){
+            return url('storage/' .$photo);
+        }
+        return url('https://ui-avatars.com/api/?name=' . $this->name);
+    }
+    public function getRegisteredDateAttribute()
+    {
+        return $this->created_at->format( 'F Y');
+    }
+}
