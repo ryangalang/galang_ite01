@@ -37,8 +37,8 @@
             <!-- /.login-logo -->
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg">Sign in to start your session</p>
-                    <form action="{{ route('login') }}" method="post">
+                    <p class="login-box-msg">Reset Password</p>
+                    <form action="{{ route('password.email') }}" method="post">
                         @csrf
                         <div class="input-group mb-3">
                             <input type="email" name="email" class="form-control  @error('email') is-invalid @enderror" placeholder="Email" />
