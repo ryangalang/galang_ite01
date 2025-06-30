@@ -1,60 +1,95 @@
 <?php
 
-namespace App\Mail;
+namespace App\Http\Controllers\Client;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+// use App\Models\Profile; // Uncomment if using a Profile model
+use Illuminate\Support\Facades\Auth;
 
-class SendAppointmentEmail extends Mailable
+class ProfileController extends Controller
 {
-    use Queueable, SerializesModels;
-
-    public $student;
-    public $schedule_date;
-
     /**
-     * Create a new message instance.
+     * Display the user's profile.
      */
-    public function __construct($student, $schedule_date)
+    public function index()
     {
-        $this->student = $student;
-        $this->schedule_date = $schedule_date;
+        $user = Auth::user();
+        return view('client.profile.index', compact('user'));
     }
 
     /**
-     * Get the message envelope.
+     * Show the form for creating a new profile (optional).
      */
-    public function envelope(): Envelope
+    public function create()
     {
-        return new Envelope(
-            subject: 'Appointment Confirmation',
-        );
+        return view('client.profile.create');
     }
 
     /**
-     * Get the message content definition.
+     * Store a newly created profile in storage.
      */
-    public function content(): Content
+    public function store(Request $request)
     {
-        return new Content(
-            view: 'mails.appointment',
-            with: [
-                'student' => $this->student,
-                'schedule_date' => $this->schedule_date,
-            ],
-        );
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+        ]);
+
+        // Profile::create($request->all()); // For profile table
+
+        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
     }
 
     /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * Display the specified profile.
      */
-    public function attachments(): array
+    public function show($id)
     {
-        return [];
+        // $profile = Profile::findOrFail($id);
+        return view('client.profile.show'); // , compact('profile')
+    }
+
+    /**
+     * Show the form for editing the profile.
+     */
+    public function edit($id)
+    {
+        $user = Auth::user();
+
+        return view('client.profile.edit', compact('user'));
+    }
+
+    /**
+     * Update the user's profile.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Remove the specified profile from storage.
+     */
+    public function destroy($id)
+    {
+        // Profile::findOrFail($id)->delete();
+        return redirect()->route('profile.index')->with('success', 'Profile deleted successfully.');
     }
 }
