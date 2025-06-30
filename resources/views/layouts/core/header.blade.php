@@ -132,7 +132,7 @@
                         <img src="{{ auth()->user()->display_photo }}" class="rounded-circle shadow" alt="User Image" />
                         <p>
                             {{ auth()->user()->name }} - Web Developer
-                            <small>Member since {{ auth()->user()->registered_date}}</small>
+                            <small>Member since {{ auth()->user()->registered_date }}</small>
                         </p>
                     </li>
 
