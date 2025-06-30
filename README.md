@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Update User Info</h3>
+                    <h3 class="card-title">Update User Profile</h3>
                 </div>
 
                 <!-- Success Alert -->
@@ -27,7 +27,7 @@
                             <label for="name">User Fullname</label>
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                                    id="name" placeholder="Enter fullname"
-                                   value="{{ $user->name ?? '' }}">
+                                   value="{{auth()->user()->name }}">
                             @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
