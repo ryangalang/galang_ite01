@@ -27,7 +27,7 @@
                             <label for="name">User Fullname</label>
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                                    id="name" placeholder="Enter fullname"
-                                   value="{{auth()->user()->name }}">
+                                   value="{{ auth()->user()->name }}">
                             @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -40,7 +40,7 @@
                             <label for="email">Email address</label>
                             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                    id="email" placeholder="Enter email"
-                                   value="{{ $user->email ?? '' }}">
+                                   value="{{ auth()->user()->email }}">
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
