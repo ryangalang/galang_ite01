@@ -70,7 +70,7 @@
                             <!-- /.col -->
                             <div class="col-12">
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary">Send Reset Password Link</button>
+                                    <button type="submit" class="btn btn-primary">Reset Password</button>
                                 </div>
                             </div>
                             <!-- /.col -->
