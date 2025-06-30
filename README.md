@@ -1,93 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\Client\StudentController;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+Route::get('/', function () {
+    return view('welcome');
+});
 
-class ProfileController extends Controller
-{
-    /**
-     * Display a listing of the profile resource.
-     */
-    public function index()
-    {
-        
-        return view('client.profile.index');
-    }
 
-    /**
-     * Show the form for creating a new profile.
-     */
-    public function create()
-    {
-        
-        return view('client.profile.create');
-    }
+Route::get('/account/{id}', function ($id) {
+    return "Hello $id";
+});
+Auth::routes();
 
-    /**
-     * Store a newly created profile in storage.
-     */
-    public function store(Request $request)
-    {
-        
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-        ]);
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-        
-
-        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
-    }
-
-    /**
-     * Display the specified profile.
-     */
-    public function show($id)
-    {
-        // Example: Fetch profile by ID and pass to view
-        // $profile = Profile::findOrFail($id);
-        // return view('client.profile.show', compact('profile'));
-
-        return view('client.profile.show');
-    }
-
-    /**
-     * Show the form for editing the specified profile.
-     */
-    public function edit($id)
-    {
-        // $profile = Profile::findOrFail($id);
-        // return view('client.profile.edit', compact('profile'));
-
-        return view('client.profile.edit');
-    }
-
-    /**
-     * Update the specified profile in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-        ]);
-
-        // $profile = Profile::findOrFail($id);
-        // $profile->update($request->all());
-
-        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
-    }
-
-    /**
-     * Remove the specified profile from storage.
-     */
-    public function destroy($id)
-    {
-        // $profile = Profile::findOrFail($id);
-        // $profile->delete();
-
-        return redirect()->route('profile.index')->with('success', 'Profile deleted successfully.');
-    }
-}
+Route::prefix('client')->middleware('auth:web')->group(function(){
+    Route::resource('users',UserController::class);
+    Route::resource('students',StudentController::class);
+    Route::resource('profile', ProfileController::class);
+});
+Route::prefix('client')->group(function () {
+    Route::resource('appointments', \App\Http\Controllers\Client\AppointmentController::class);
+});
