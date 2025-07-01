@@ -1,111 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+use App\Http\Controllers\Auth\LoginController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\Client\StudentController;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-// use App\Models\Profile; // Uncomment if using a Profile model
-use Illuminate\Support\Facades\Auth;
+Route::get('/', function () {
+    return view('welcome');
+});
 
-class ProfileController extends Controller
-{
-    /**
-     * Display the user's profile.
-     */
-    public function index()
-    {
-        $user = Auth::user();
-        return view('client.profile.index', compact('user'));
-    }
 
-    /**
-     * Show the form for creating a new profile (optional).
-     */
-    public function create()
-    {
-        return view('client.profile.create');
-    }
+Route::get('/account/{id}', function ($id) {
+    return "Hello $id";
+});
+Auth::routes();
 
-    /**
-     * Store a newly created profile in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-        ]);
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-        // Profile::create($request->all()); // For profile table
+Route::prefix('client')->middleware('auth:web')->group(function(){
+    Route::resource('users',UserController::class);
+    Route::resource('students',StudentController::class);
+    Route::resource('profile', ProfileController::class);
+});
+Route::prefix('client')->group(function () {
+    Route::resource('appointments', \App\Http\Controllers\Client\AppointmentController::class);
+});
 
-        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
-    }
-
-    /**
-     * Display the specified profile.
-     */
-    public function show($id)
-    {
-        // $profile = Profile::findOrFail($id);
-        return view('client.profile.show'); // , compact('profile')
-    }
-
-    /**
-     * Show the form for editing the profile.
-     */
-    public function edit($id)
-    {
-        $user = Auth::user();
-
-        return view('client.profile.edit', compact('user'));
-    }
-
-    /**
-     * Update the user's profile.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate(
-        [
-            'name'  => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:8|confirmed',
-            'contact_number' => 'required'
-        ] 
-    );
-
-        $user = Auth::user();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->contact_number = $request->contact_number;
-        $user->is_otp_enabled  = $request->is_otp_enabled;
-
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
-        }
-
-        if($request->has('photo') && $request->file('photo')->isValid()) {
-            $photo = $request->file('photo');
-            $originalName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
-            $extension =$photo->getClientOriginalExtension();
-
-            $photo_name =$originalName . '-' . time() . '-' . $extension;
-            $path =$request->file('photo')->storeAs('photos', $photo_name, 'public');
-            $user->photo = $path;
-
-        }
-
-        $user->save();
-
-        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
-    }
-
-    /**
-     * Remove the specified profile from storage.
-     */
-    public function destroy($id)
-    {
-        // Profile::findOrFail($id)->delete();
-        return redirect()->route('profile.index')->with('success', 'Profile deleted successfully.');
-    }
-}
+Route::get('one-time-password', [LoginController::class, 'oneTimePassword']);
+Route::post('one-time-password', [LoginController::class, 'storeOtp']);
