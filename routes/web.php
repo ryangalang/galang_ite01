@@ -20,7 +20,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::prefix('client')->middleware('auth:web')->group(function(){
+Route::prefix('client')->middleware(['auth:web', 'check_otp'])->group(function(){
     Route::resource('users',UserController::class);
     Route::resource('students',StudentController::class);
     Route::resource('profile', ProfileController::class);

@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class OtpController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
-     * Display a listing of the resource.
+     * Show the OTP entry form.
      */
     public function index()
     {
@@ -16,50 +22,33 @@ class OtpController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Handle OTP submission and verification.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate(
+            [
+                'one_time_password' => 'required',
+            ],
+            [
+                'one_time_password.required' => 'One time password field is required.',
+            ]
+        );
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $user = User::find(auth()->id());
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if (!$user) {
+            
+            return redirect()->back()->with('error', 'User not found.');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($user->otp_number == $request->input('one_time_password')) {
+            $user->otp_number = null;
+            $user->save();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return redirect()->route('home');
+        }
+
+        return redirect()->back()->with('error', 'Invalid one time password.');
     }
 }
