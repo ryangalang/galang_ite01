@@ -1,129 +1,111 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Update User Profile</h3>
-                </div>
+namespace App\Http\Controllers\Client;
 
-                <!-- Success Alert -->
-                @if (session('success'))
-                    <div class="alert alert-success m-3" role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+// use App\Models\Profile; // Uncomment if using a Profile model
+use Illuminate\Support\Facades\Auth;
 
-                <!-- Form Start -->
-                <form action="{{ url('client/profile/' . auth()->user()->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+class ProfileController extends Controller
+{
+    /**
+     * Display the user's profile.
+     */
+    public function index()
+    {
+        $user = Auth::user();
+        return view('client.profile.index', compact('user'));
+    }
 
-                    <div class="card-body">
-                        <!-- Full Name -->
-                        <div class="form-group mb-2">
-                            <label for="name">User Fullname</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                   id="name" placeholder="Enter fullname"
-                                   value="{{ auth()->user()->name }}">
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * Show the form for creating a new profile (optional).
+     */
+    public function create()
+    {
+        return view('client.profile.create');
+    }
 
-                        <!-- Email -->
-                        <div class="form-group mb-2">
-                            <label for="email">Email address</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                   id="email" placeholder="Enter email"
-                                   value="{{ auth()->user()->email }}">
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * Store a newly created profile in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+        ]);
 
-                        <!-- Password -->
-                        <div class="form-group mb-2">
-                            <label for="password">Password</label>
-                            <input type="password" name="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   id="password" placeholder="Password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+        // Profile::create($request->all()); // For profile table
 
-                        <!-- Retype Password -->
-                        <div class="form-group mb-2">
-                            <label for="password_confirmation">Retype Password</label>
-                            <input type="password" name="password_confirmation" class="form-control"
-                                   id="password_confirmation" placeholder="Retype Password">
-                        </div>
+        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
+    }
 
-                        <!-- Contact Number -->
-                        <div class="form-group mb-2">
-                            <label for="contact_number">Contact Number</label>
-                            <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
-                                   id="contact_number" placeholder="Enter contact number"
-                                   value="{{ auth()->user()->contact_number }}">
-                            @error('contact_number')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    /**
+     * Display the specified profile.
+     */
+    public function show($id)
+    {
+        // $profile = Profile::findOrFail($id);
+        return view('client.profile.show'); // , compact('profile')
+    }
 
-                        <!-- Enable One Time Password -->
-                        <div class="form-group mb-2">
-                            <label>Enable One Time Password</label>
-                            <div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="is_otp_enabled" id="is_otp_enabled1" value="1"
-                                        {{ auth()->user()->is_otp_enabled == 1 ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="is_otp_enabled1">Yes</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="is_otp_enabled" id="is_otp_enabled2" value="0"
-                                        {{ auth()->user()->is_otp_enabled == 0 || is_null(auth()->user()->is_otp_enabled) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="is_otp_enabled2">No</label>
-                                </div>
-                            </div>
-                        </div>
+    /**
+     * Show the form for editing the profile.
+     */
+    public function edit($id)
+    {
+        $user = Auth::user();
 
-                        <!-- Profile Photo -->
-                        <div class="form-group mb-2">
-                            <label for="photo">Profile Photo</label>
-                            <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror" id="photo">
-                            @error('photo')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+        return view('client.profile.edit', compact('user'));
+    }
 
-                            @if(auth()->user()->photo)
-                                <div class="mt-2">
-                                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Profile Photo" class="img-thumbnail" style="max-height: 120px;">
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+    /**
+     * Update the user's profile.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate(
+        [
+            'name'  => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8|confirmed',
+            'contact_number' => 'required'
+        ] 
+    );
 
-                    <!-- Submit Button -->
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->contact_number = $request->contact_number;
+        $user->is_otp_enabled  = $request->is_otp_enabled;
 
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        if($request->has('photo') && $request->file('photo')->isValid()) {
+            $photo = $request->file('photo');
+            $originalName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension =$photo->getClientOriginalExtension();
+
+            $photo_name =$originalName . '-' . time() . '-' . $extension;
+            $path =$request->file('photo')->storeAs('photos', $photo_name, 'public');
+            $user->photo = $path;
+
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Remove the specified profile from storage.
+     */
+    public function destroy($id)
+    {
+        // Profile::findOrFail($id)->delete();
+        return redirect()->route('profile.index')->with('success', 'Profile deleted successfully.');
+    }
+}
