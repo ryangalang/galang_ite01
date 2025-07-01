@@ -68,16 +68,51 @@
                                    id="password_confirmation" placeholder="Retype Password">
                         </div>
 
+                        <!-- Contact Number -->
+                        <div class="form-group mb-2">
+                            <label for="contact_number">Contact Number</label>
+                            <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror"
+                                   id="contact_number" placeholder="Enter contact number"
+                                   value="{{ auth()->user()->contact_number }}">
+                            @error('contact_number')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <!-- Enable One Time Password -->
+                        <div class="form-group mb-2">
+                            <label>Enable One Time Password</label>
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_otp_enabled" id="is_otp_enabled1" value="1"
+                                        {{ auth()->user()->is_otp_enabled == 1 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_otp_enabled1">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_otp_enabled" id="is_otp_enabled2" value="0"
+                                        {{ auth()->user()->is_otp_enabled == 0 || is_null(auth()->user()->is_otp_enabled) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_otp_enabled2">No</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Profile Photo -->
                         <div class="form-group mb-2">
                             <label for="photo">Profile Photo</label>
-                            <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror"
-                                   id="photo">
+                            <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror" id="photo">
                             @error('photo')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+
+                            @if(auth()->user()->photo)
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Profile Photo" class="img-thumbnail" style="max-height: 120px;">
+                                </div>
+                            @endif
                         </div>
                     </div>
 

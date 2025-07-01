@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('photo')->nullable()->after('password');
+            $table->string('contact_number')->nullable()->after('password');
+            $table->boolean('is_otp_enabled')->nullable()->after('contact_number');
+            $table->bigInteger('otp_number')->nullable()->after('is_otp_enabled');
         });
     }
 
@@ -23,6 +26,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('photo');
+            $table->dropColumn('contact_number');
+            $table->dropColumn('is_otp_enabled');
+            $table->dropColumn('otp_number');
         });
     }
 };

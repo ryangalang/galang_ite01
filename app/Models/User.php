@@ -54,7 +54,7 @@ class User extends Authenticatable
         if($photo){
             return url('storage/' .$photo);
         }
-        return url('https://ui-avatars.com/api/?name=' . $this->name);
+        return url('https://ui-avatars.com/api/?name=' . $this->name . '&background=random');
     }
     public function getRegisteredDateAttribute()
     {

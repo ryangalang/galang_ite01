@@ -70,12 +70,15 @@ class ProfileController extends Controller
             'name'  => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:8|confirmed',
+            'contact_number' => 'required'
         ] 
     );
 
         $user = Auth::user();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->contact_number = $request->contact_number;
+        $user->is_otp_enabled  = $request->is_otp_enabled;
 
         if ($request->filled('password')) {
             $user->password = bcrypt($request->password);
