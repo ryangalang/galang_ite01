@@ -1,32 +1,44 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\UserController;
-use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\Client\StudentController;
-use Symfony\Component\HttpKernel\Profiler\Profile;
+namespace App\Http\Controllers\Auth;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
+class LoginController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Login Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles authenticating users for the application and
+    | redirecting them to your home screen. The controller uses a trait
+    | to conveniently provide its functionality to your applications.
+    |
+    */
 
-Route::get('/account/{id}', function ($id) {
-    return "Hello $id";
-});
-Auth::routes();
+    use AuthenticatesUsers;
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
 
-Route::prefix('client')->middleware('auth:web')->group(function(){
-    Route::resource('users',UserController::class);
-    Route::resource('students',StudentController::class);
-    Route::resource('profile', ProfileController::class);
-});
-Route::prefix('client')->group(function () {
-    Route::resource('appointments', \App\Http\Controllers\Client\AppointmentController::class);
-});
-
-Route::get('one-time-password', [LoginController::class, 'oneTimePassword']);
-Route::post('one-time-password', [LoginController::class, 'storeOtp']);
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+        $this->middleware('auth')->only('logout');
+    }
+    public function oneTimePassword()
+    {
+        return view('auth.otp');
+    }
+}
