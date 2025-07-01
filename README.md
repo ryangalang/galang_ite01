@@ -1,44 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Middleware;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
-class LoginController extends Controller
+class CheckOtp
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
     /**
-     * Where to redirect users after login.
+     * Handle an incoming request.
      *
-     * @var string
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function handle(Request $request, Closure $next): Response
     {
-        $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
-    }
-    public function oneTimePassword()
-    {
-        return view('auth.otp');
+        if(Auth::check()){
+            $user = Auth::user();
+            if(isset($user->otp_number)) {
+                return redirect()->to('one-time-password');
+            }
+        }
+        return $next($request);
     }
 }
