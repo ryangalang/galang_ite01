@@ -3,42 +3,52 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\Models\User;
 
-class LoginController extends Controller
+class OtpController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
+        $this->middleware('auth');
     }
-    public function oneTimePassword()
+
+    /**
+     * Show the OTP entry form.
+     */
+    public function index()
     {
         return view('auth.otp');
+    }
+
+    /**
+     * Handle OTP submission and verification.
+     */
+    public function store(Request $request)
+    {
+        $request->validate(
+            [
+                'one_time_password' => 'required',
+            ],
+            [
+                'one_time_password.required' => 'One time password field is required.',
+            ]
+        );
+
+        $user = User::find(auth()->id());
+
+        if (!$user) {
+            // Optional: handle the unlikely case user not found
+            return redirect()->back()->with('error', 'User not found.');
+        }
+
+        if ($user->otp_number == $request->input('one_time_password')) {
+            $user->otp_number = null;
+            $user->save();
+
+            return redirect()->route('home');
+        }
+
+        return redirect()->back()->with('error', 'Invalid one time password.');
     }
 }
