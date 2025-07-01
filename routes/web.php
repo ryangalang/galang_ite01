@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\OtpController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\Client\ProfileController;
@@ -28,5 +29,4 @@ Route::prefix('client')->group(function () {
     Route::resource('appointments', \App\Http\Controllers\Client\AppointmentController::class);
 });
 
-Route::get('one-time-password', [LoginController::class, 'oneTimePassword']);
-Route::post('one-time-password', [LoginController::class, 'storeOtp']);
+Route::resource('one-time-password', OtpController::class);

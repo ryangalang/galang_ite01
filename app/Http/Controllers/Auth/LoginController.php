@@ -146,8 +146,4 @@ class LoginController extends Controller
         return redirect()->to('one-time-password');
     }
 
-    public function oneTimePassword()
-    {
-        return view('auth.otp');
-    }
 }
