@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Aloha\Twilio\Twilio;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Jobs\SendOtpEmailJob;
 
 class LoginController extends Controller
 {
@@ -143,6 +145,9 @@ class LoginController extends Controller
         $user->otp_number = $otp_password;
         $user->save();
 
+        //send email
+        SendOtpEmailJob::dispatch($user, $otp_password);
+        
         return redirect()->to('one-time-password');
     }
 
