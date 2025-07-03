@@ -1,59 +1,43 @@
-<?php
+I- INTERACTIVE
+R- RECRUITMENT
+I- INFORMATION
+S- SYSTEM
 
-namespace App\Http\Controllers\Api\Auth;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+APPLICATION INFORMATION
+    -working experience
+    -educational attainment
+    -medical
 
-class LoginController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+JOB OPENING
+    -job title
+    -job description
+    -data needed
+    -data expiry
+    -status (active, inactive, expired) pag expired di na makikita
+    -location
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
-        if(Auth::attempt($credentials)){
-            $user = Auth::user();
-            $token = $user->createToken('GalangITE01')->plainTextToken;
+JOB APPLICATION
+    -applicant
+    -job
 
-            return response()->json(['token' => $token], 200);
+Finance
+"si ryan nag bayad ng chuchu amount 500" processing 
 
-        }
+Manage User
 
-        return response()->json(['error' => 'Unauthorize'], 401);
-    }
+Reports
+    -applicant reports
+        -filter data range (start date and end date)
+        -filter by user 
+        -status (Line up: On Process, For Interview, For Medical, Deployed)
+    -job report
+        -filter date range
+        -filter by user
+        
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+laravel blade crud  laravel herd table plus dbengine 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-}
+//ang nagiinsert lang ng data is ung agency 
+walang registration, login lang meron admin acc, ang magaadd ng user is admin sa manage user page. //
