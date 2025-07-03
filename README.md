@@ -34,7 +34,7 @@ Reports
     -job report
         -filter date range
         -filter by user
-        
+    -audit trail
 
 laravel blade crud  laravel herd table plus dbengine 
 
