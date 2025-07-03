@@ -67,8 +67,6 @@ walang registration, login lang meron admin acc, ang magaadd ng user is admin sa
 
 
 
-
-
 🛡️ SYSTEM OVERVIEW (ADMIN-ONLY)
 Module	Description
 🔐 Login only	No registration. Only admin can log in.
